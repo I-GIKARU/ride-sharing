@@ -1,0 +1,57 @@
+# Git
+.git
+.gitignore
+.github
+
+# Documentation
+README.md
+docs/
+*.md
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Environment files
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Test files
+*_test.go
+test/
+coverage.out
+
+# Build artifacts
+kenyan-ride-share
+kenyan-ride-share-backend
+*.exe
+*.dll
+*.so
+*.dylib
+
+# Docker
+Dockerfile
+.dockerignore
+docker-compose.yml
+docker-compose.yaml
+
+# Deployment
+deployment/
+scripts/
+
+# Logs
+logs/
+*.log
+
+# Temporary files
+tmp/
+temp/

@@ -1,0 +1,48 @@
+# Binaries for programs and plugins
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+
+# Output of the go coverage tool
+*.out
+
+# Go module/workspace files (optional to ignore go.work files)
+go.work
+go.work.sum
+
+# Vendor directory (if using go mod vendor)
+vendor/
+
+# Dependency directories (if using older tools like Godep)
+Godeps/
+
+# IDE/editor settings
+.idea/
+.vscode/
+
+# Node modules (if frontend is involved)
+node_modules/
+
+# Logs
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Env files
+.env
+.env.*
+*.env
+
+# Docker files (optional)
+docker-compose.override.yml
+
+# Temporary files
+*.tmp
+*.swp
+*.bak
+*.old
+

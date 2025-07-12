@@ -21,7 +21,7 @@ func NewComplianceService(db *gorm.DB) *ComplianceService {
 // ValidateDriverCompliance checks if driver meets Kenya NTSA requirements
 func (c *ComplianceService) ValidateDriverCompliance(driverID uuid.UUID) (*DriverComplianceStatus, error) {
 	var driver models.Driver
-	if err := c.db.Preload("User").Where("driver_id = ?", driverID).First(&driver).Error; err != nil {
+	if err := c.db.Where("driver_id = ?", driverID).First(&driver).Error; err != nil {
 		return nil, err
 	}
 
@@ -83,8 +83,7 @@ func (c *ComplianceService) CalculateCommission(fareAmount float64) *CommissionB
 // GenerateNTSAReport creates compliance report for NTSA
 func (c *ComplianceService) GenerateNTSAReport(startDate, endDate string) (*NTSAReport, error) {
 	var rides []models.Ride
-	if err := c.db.Preload("Driver.User").Preload("Passenger").Preload("RideRequest").
-		Where("created_at BETWEEN ? AND ? AND status = ?", startDate, endDate, "completed").
+	if err := c.db.Where("created_at BETWEEN ? AND ? AND status = ?", startDate, endDate, "completed").
 		Find(&rides).Error; err != nil {
 		return nil, err
 	}
@@ -102,18 +101,37 @@ func (c *ComplianceService) GenerateNTSAReport(startDate, endDate string) (*NTSA
 			report.TotalRevenue += *ride.ActualFare
 		}
 
+		// Get driver details
+		var driver models.Driver
+		var user models.User
+		driverName := "Unknown Driver"
+		if err := c.db.Where("driver_id = ?", ride.DriverID).First(&driver).Error; err == nil {
+			if err := c.db.Where("id = ?", ride.DriverID).First(&user).Error; err == nil {
+				driverName = user.FirstName + " " + user.LastName
+			}
+		}
+
+		// Get ride request details
+		var rideRequest models.RideRequest
+		pickupLocation := "Unknown"
+		dropoffLocation := "Unknown"
+		if err := c.db.Where("id = ?", ride.RequestID).First(&rideRequest).Error; err == nil {
+			pickupLocation = fmt.Sprintf("%.6f,%.6f", rideRequest.PickupLatitude, rideRequest.PickupLongitude)
+			dropoffLocation = fmt.Sprintf("%.6f,%.6f", rideRequest.DropoffLatitude, rideRequest.DropoffLongitude)
+		}
+
 		rideData := NTSARideData{
-			RideID:           ride.ID.String(),
-			DriverID:         ride.DriverID.String(),
-			DriverName:       ride.Driver.User.FirstName + " " + ride.Driver.User.LastName,
-			PassengerID:      ride.PassengerID.String(),
-			StartTime:        ride.StartTime,
-			EndTime:          ride.EndTime,
-			PickupLocation:   fmt.Sprintf("%.6f,%.6f", ride.RideRequest.PickupLatitude, ride.RideRequest.PickupLongitude),
-			DropoffLocation:  fmt.Sprintf("%.6f,%.6f", ride.RideRequest.DropoffLatitude, ride.RideRequest.DropoffLongitude),
-			Distance:         ride.ActualDistanceKm,
-			Duration:         ride.ActualDurationMinutes,
-			Fare:             ride.ActualFare,
+			RideID:          ride.ID.String(),
+			DriverID:        ride.DriverID.String(),
+			DriverName:      driverName,
+			PassengerID:     ride.PassengerID.String(),
+			StartTime:       ride.StartTime,
+			EndTime:         ride.EndTime,
+			PickupLocation:  pickupLocation,
+			DropoffLocation: dropoffLocation,
+			Distance:        ride.ActualDistanceKm,
+			Duration:        ride.ActualDurationMinutes,
+			Fare:            ride.ActualFare,
 		}
 
 		if ride.ActualFare != nil {

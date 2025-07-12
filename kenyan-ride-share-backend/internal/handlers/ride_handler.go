@@ -89,11 +89,8 @@ func (h *RideHandler) CreateRideRequest(c *gin.Context) {
 		return
 	}
 
-	// Load passenger details
-	if err := h.db.Preload("Passenger").First(&rideRequest, rideRequest.ID).Error; err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to load ride request details"})
-		return
-	}
+	// Return ride request details
+	// Note: Additional details like passenger info can be fetched separately if needed
 
 	c.JSON(http.StatusCreated, rideRequest)
 }
@@ -102,7 +99,7 @@ func (h *RideHandler) GetRideRequest(c *gin.Context) {
 	requestID := c.Param("id")
 
 	var rideRequest models.RideRequest
-	if err := h.db.Preload("Passenger").Where("id = ?", requestID).First(&rideRequest).Error; err != nil {
+	if err := h.db.Where("id = ?", requestID).First(&rideRequest).Error; err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Ride request not found"})
 		return
 	}
@@ -140,7 +137,7 @@ func (h *RideHandler) GetNearbyDrivers(c *gin.Context) {
 
 	// Find nearby available drivers
 	var drivers []models.Driver
-	if err := h.db.Preload("User").Where("is_available = ? AND is_approved = ? AND current_latitude IS NOT NULL AND current_longitude IS NOT NULL", true, true).Find(&drivers).Error; err != nil {
+	if err := h.db.Where("is_available = ? AND is_approved = ? AND current_latitude IS NOT NULL AND current_longitude IS NOT NULL", true, true).Find(&drivers).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to find drivers"})
 		return
 	}
@@ -224,7 +221,7 @@ func (h *RideHandler) AcceptRideRequest(c *gin.Context) {
 	tx.Commit()
 
 	// Load ride details
-	if err := h.db.Preload("RideRequest").Preload("Driver.User").Preload("Passenger").First(&ride, ride.ID).Error; err != nil {
+	if err := h.db.Preload("Driver.User").Preload("Passenger").First(&ride, ride.ID).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to load ride details"})
 		return
 	}
@@ -310,7 +307,7 @@ func (h *RideHandler) EndRide(c *gin.Context) {
 
 	// Get ride
 	var ride models.Ride
-	if err := h.db.Preload("RideRequest").Where("id = ? AND driver_id = ? AND status = ?", rideID, driverUUID, "in_progress").First(&ride).Error; err != nil {
+	if err := h.db.Where("id = ? AND driver_id = ? AND status = ?", rideID, driverUUID, "in_progress").First(&ride).Error; err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Ride not found or not authorized"})
 		return
 	}
@@ -320,11 +317,18 @@ func (h *RideHandler) EndRide(c *gin.Context) {
 		return
 	}
 
+	// Get ride request for fare calculation
+	var rideRequest models.RideRequest
+	if err := h.db.Where("id = ?", ride.RequestID).First(&rideRequest).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Ride request not found"})
+		return
+	}
+
 	// Calculate actual fare and duration
 	now := time.Now()
 	duration := int(now.Sub(*ride.StartTime).Minutes())
-	actualFare := *ride.RideRequest.EstimatedFare // Use estimated fare for now
-	actualDistance := *ride.RideRequest.EstimatedDistanceKm
+	actualFare := *rideRequest.EstimatedFare // Use estimated fare for now
+	actualDistance := *rideRequest.EstimatedDistanceKm
 
 	// Start transaction
 	tx := h.db.Begin()
@@ -345,7 +349,7 @@ func (h *RideHandler) EndRide(c *gin.Context) {
 	}
 
 	// Update ride request status
-	if err := tx.Model(&ride.RideRequest).Update("status", "completed").Error; err != nil {
+	if err := tx.Model(&models.RideRequest{}).Where("id = ?", ride.RequestID).Update("status", "completed").Error; err != nil {
 		tx.Rollback()
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update ride request"})
 		return
@@ -387,7 +391,7 @@ func (h *RideHandler) GetRide(c *gin.Context) {
 	rideID := c.Param("id")
 
 	var ride models.Ride
-	if err := h.db.Preload("RideRequest").Preload("Driver.User").Preload("Passenger").Where("id = ?", rideID).First(&ride).Error; err != nil {
+	if err := h.db.Preload("Driver.User").Preload("Passenger").Where("id = ?", rideID).First(&ride).Error; err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Ride not found"})
 		return
 	}
@@ -406,7 +410,7 @@ func (h *RideHandler) GetUserRides(c *gin.Context) {
 	}
 
 	var rides []models.Ride
-	if err := h.db.Preload("RideRequest").Preload("Driver.User").Preload("Passenger").Where("passenger_id = ? OR driver_id = ?", userID, userID).Order("created_at DESC").Find(&rides).Error; err != nil {
+	if err := h.db.Preload("Driver.User").Preload("Passenger").Where("passenger_id = ? OR driver_id = ?", userID, userID).Order("created_at DESC").Find(&rides).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch rides"})
 		return
 	}
@@ -540,7 +544,7 @@ func (h *RideHandler) GetUserReviews(c *gin.Context) {
 	userID := c.Param("id")
 
 	var reviews []models.Review
-	if err := h.db.Preload("Reviewer").Preload("Ride").Where("reviewed_id = ?", userID).Order("created_at DESC").Find(&reviews).Error; err != nil {
+	if err := h.db.Preload("Ride").Where("reviewed_id = ?", userID).Order("created_at DESC").Find(&reviews).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch reviews"})
 		return
 	}

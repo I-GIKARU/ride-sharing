@@ -54,6 +54,12 @@ func main() {
 		api.POST("/register", userHandler.Register)
 		api.POST("/login", userHandler.Login)
 		
+		// Auth routes (no authentication required)
+		api.GET("/auth/verify-email", userHandler.VerifyEmail)
+		api.POST("/auth/resend-verification", userHandler.ResendVerificationEmail)
+		api.POST("/auth/forgot-password", userHandler.ForgotPassword)
+		api.POST("/auth/reset-password", userHandler.ResetPassword)
+		
 		// Protected routes
 		protected := api.Group("/")
 		protected.Use(middleware.AuthMiddleware())

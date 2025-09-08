@@ -1,0 +1,18 @@
+[
+    {
+        "merged": "com.ridesapp-mergeDebugResources-47:/layout/activity_ride_request.xml",
+        "source": "com.ridesapp-main-50:/layout/activity_ride_request.xml"
+    },
+    {
+        "merged": "com.ridesapp-mergeDebugResources-47:/layout/activity_login.xml",
+        "source": "com.ridesapp-main-50:/layout/activity_login.xml"
+    },
+    {
+        "merged": "com.ridesapp-mergeDebugResources-47:/layout/activity_home.xml",
+        "source": "com.ridesapp-main-50:/layout/activity_home.xml"
+    },
+    {
+        "merged": "com.ridesapp-mergeDebugResources-47:/layout/activity_main.xml",
+        "source": "com.ridesapp-main-50:/layout/activity_main.xml"
+    }
+]

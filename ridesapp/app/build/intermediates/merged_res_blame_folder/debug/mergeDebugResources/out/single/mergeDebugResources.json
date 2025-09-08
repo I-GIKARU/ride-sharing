@@ -1,0 +1,42 @@
+[
+    {
+        "merged": "/home/tbag/.gradle/daemon/8.14.3/com.ridesapp-debug-48:/mipmap-xhdpi_ic_launcher.png.flat",
+        "source": "/home/tbag/.gradle/daemon/8.14.3/com.ridesapp-main-50:/mipmap-xhdpi/ic_launcher.png"
+    },
+    {
+        "merged": "/home/tbag/.gradle/daemon/8.14.3/com.ridesapp-debug-48:/layout_activity_main.xml.flat",
+        "source": "/home/tbag/.gradle/daemon/8.14.3/com.ridesapp-main-50:/layout/activity_main.xml"
+    },
+    {
+        "merged": "/home/tbag/.gradle/daemon/8.14.3/com.ridesapp-debug-48:/layout_activity_ride_request.xml.flat",
+        "source": "/home/tbag/.gradle/daemon/8.14.3/com.ridesapp-main-50:/layout/activity_ride_request.xml"
+    },
+    {
+        "merged": "/home/tbag/.gradle/daemon/8.14.3/com.ridesapp-debug-48:/mipmap-hdpi_ic_launcher.png.flat",
+        "source": "/home/tbag/.gradle/daemon/8.14.3/com.ridesapp-main-50:/mipmap-hdpi/ic_launcher.png"
+    },
+    {
+        "merged": "/home/tbag/.gradle/daemon/8.14.3/com.ridesapp-debug-48:/mipmap-xxhdpi_ic_launcher.png.flat",
+        "source": "/home/tbag/.gradle/daemon/8.14.3/com.ridesapp-main-50:/mipmap-xxhdpi/ic_launcher.png"
+    },
+    {
+        "merged": "/home/tbag/.gradle/daemon/8.14.3/com.ridesapp-debug-48:/layout_activity_login.xml.flat",
+        "source": "/home/tbag/.gradle/daemon/8.14.3/com.ridesapp-main-50:/layout/activity_login.xml"
+    },
+    {
+        "merged": "/home/tbag/.gradle/daemon/8.14.3/com.ridesapp-debug-48:/mipmap-mdpi_ic_launcher.png.flat",
+        "source": "/home/tbag/.gradle/daemon/8.14.3/com.ridesapp-main-50:/mipmap-mdpi/ic_launcher.png"
+    },
+    {
+        "merged": "/home/tbag/.gradle/daemon/8.14.3/com.ridesapp-debug-48:/layout_activity_home.xml.flat",
+        "source": "/home/tbag/.gradle/daemon/8.14.3/com.ridesapp-main-50:/layout/activity_home.xml"
+    },
+    {
+        "merged": "/home/tbag/.gradle/daemon/8.14.3/com.ridesapp-debug-48:/mipmap-xxxhdpi_ic_launcher.png.flat",
+        "source": "/home/tbag/.gradle/daemon/8.14.3/com.ridesapp-main-50:/mipmap-xxxhdpi/ic_launcher.png"
+    },
+    {
+        "merged": "com.ridesapp-debug-48:/drawable_ic_launcher.xml.flat",
+        "source": "com.ridesapp-main-50:/drawable/ic_launcher.xml"
+    }
+]

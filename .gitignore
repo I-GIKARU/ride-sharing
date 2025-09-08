@@ -1,0 +1,23 @@
+# Android build artifacts
+ridesapp/build/
+ridesapp/.gradle/
+ridesapp/app/build/
+ridesapp/local.properties
+*.apk
+*.ap_
+*.dex
+*.class
+
+# Android Studio
+ridesapp/.idea/
+*.iml
+
+# Go build artifacts
+ride-sharing-backend/server.log
+*.log
+
+# General
+.DS_Store
+*.tmp
+*.temp
+node_modules/
